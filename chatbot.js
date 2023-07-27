@@ -279,7 +279,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
     </div>
     <div class="chat-input">      
         <form class="form-container">
-            <textarea id="chat-input" placeholder="Send a message..."></textarea>
+            <textarea id="chat-input" placeholder="Napište zprávu..."></textarea>
             <button type="submit" class="chat-submit" id="chat-submit"><i class="material-icons">Odeslat</i></button>
         </form>      
     </div>
