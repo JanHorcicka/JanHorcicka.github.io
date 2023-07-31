@@ -261,7 +261,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
   
   <div class="chat-box">
     <div class="chat-box-header">
-      Můžeme vám pomoct?
+      Váš nákupní asistent
       <span class="chat-box-toggle">
       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle">
         <circle cx="12" cy="12" r="10"></circle>
@@ -291,59 +291,97 @@ var script = document.createElement('script');script.src = "https://code.jquery.
         div.style.position = 'fixed';  // Set position to fixed
         div.style.bottom = '0';  // Position at the bottom of the window
         div.style.right = '0';  // Position at the right of the window
-        var referenceNode = document.getElementById('dklab_instagram_widget');
+        div.style.zIndex = '5';
+        var referenceNode = document.getElementById('footer');
         referenceNode.parentNode.insertBefore(div, referenceNode.nextSibling);
 
         // Run JavaScript
         var script = document.createElement('script');
         script.innerHTML = `  
-      var chatHistory = [];          
-      $("#chat-circle").click(function() {    
-          $("#chat-circle").toggle('scale');
-          $(".chat-box").toggle('scale');
-      })
+  var chatHistory = []; 
+  var greeted = false;         
+  $("#chat-circle").click(function() {    
+      $("#chat-circle").toggle('scale');
+      $(".chat-box").toggle('scale');
+      if (!greeted) {
+        greetUser();
+        greeted = true;
+      }
+  });
 
-      $(".chat-box-toggle").click(function() {
-          $("#chat-circle").toggle('scale');
-          $(".chat-box").toggle('scale');
-      })
+  $(".chat-box-toggle").click(function() {
+      $("#chat-circle").toggle('scale');
+      $(".chat-box").toggle('scale');
+  });
 
-      $('.chat-input form').on('submit', function(e) {
-          e.preventDefault();
-          var message = $('#chat-input').val();
-          $('#chat-input').val('');
+  $('#chat-input').on('keypress', function(e) {
+    if (e.which == 13 && !e.shiftKey) {
+        e.preventDefault();
+        // Trigger form submit
+        sendMessage();
+    }
+  });
 
-          // Update chat history with the new message from the user
-          chatHistory.push({ 'HumanMessage': message });
+  $('#chat-submit').on('click', function(e) {
+    e.preventDefault();
+    // Trigger form submit
+    sendMessage();
+  });
 
-          var messageElement = $('<div class="chat-self"><div class="icon"><i class="material-icons"><b>Vy</b></i></div><div class="chat-message">' + message + '</div></div>');
-          $('.chat-logs').append(messageElement);
+  function sendMessage() {
+      var message = $('#chat-input').val();
+      $('#chat-input').val('');
 
-          $.ajax({
-              url: 'https://metaexponential.pythonanywhere.com/api',
-              method: 'POST',
-              contentType: 'application/json',
-              data: JSON.stringify({
-                  question: message,
-                  chat_history: chatHistory
-              }),
-              dataType: 'json',
-              success: function(data) {
-                  console.log(data.answer);
-                  var urlRegex = "/(https?:\\/\\/[^\\s]+)/g";
-                  var answerWithLinks = data.answer.replace(new RegExp(urlRegex), '<a href="$$1" target="_blank">$$1</a>');
-                  chatHistory.push({ 'AIMessage': data.answer });
-                  var messageElement = $('<div class="chat-friend"><div class="icon"><i class="material-icons"><b>Chatbot</b></i></div><div class="chat-message">' + answerWithLinks + '</div></div>');
-                  $('.chat-logs').append(messageElement);
-              },
-              error: function(jqXHR, textStatus, errorThrown) {
-                  console.log(textStatus, errorThrown);
-              }
-          });
+      // Update chat history with the new message from the user
+      chatHistory.push({ 'HumanMessage': message });
+
+      var messageElement = $('<div class="chat-self"><div class="icon"><i class="material-icons"><b>Vy</b></i></div><div class="chat-message">' + message + '</div></div>');
+      $('.chat-logs').append(messageElement);
+
+      $.ajax({
+          url: 'https://metaexponential.pythonanywhere.com/api',
+          method: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify({
+              question: message,
+              chat_history: chatHistory
+          }),
+          dataType: 'json',
+          success: function(data) {
+              var urlRegex = "/(https?:\\/\\/[^\\s]+)/g";
+              var answerWithLinks = data.answer.replace(new RegExp(urlRegex), '<a href="$$1" target="_blank">$$1</a>');
+              chatHistory.push({ 'AIMessage': data.answer });
+              var messageElement = $('<div class="chat-friend"><div class="icon"><i class="material-icons"><b>Chatbot</b></i></div><div class="chat-message"></div></div>');
+              $('.chat-logs').append(messageElement);
+              typeMessage(answerWithLinks, messageElement.find('.chat-message'));
+          },
+          error: function(jqXHR, textStatus, errorThrown) {
+              console.log(textStatus, errorThrown);
+          }
       });
-  `;
+  }
 
-        document.body.appendChild(script);
+  function greetUser() {
+    var greeting = "Dobrý den, jsem asistenční robot Moia. Rád vám poradím s výběrem krému. Ptejte se...";
+    var messageElement = $('<div class="chat-friend"><div class="icon"><i class="material-icons"><b>Chatbot</b></i></div><div class="chat-message"></div></div>');
+    $('.chat-logs').append(messageElement);
+    typeMessage(greeting, messageElement.find('.chat-message'));
+  }
+
+  function typeMessage(message, element) {
+    var i = 0;
+    function typeWriter() {
+        if (i < message.length) {
+            element.append(message.charAt(i));
+            i++;
+            setTimeout(typeWriter, 10); // adjust the speed of typing here
+        }
+    }
+    setTimeout(typeWriter, 500); // start typing after 1 second
+  }
+`;
+
+document.body.appendChild(script);
 
     }
 })();
