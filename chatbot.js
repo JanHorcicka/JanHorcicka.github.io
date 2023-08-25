@@ -38,6 +38,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
             border-radius: 50%;
             color: white;
             cursor: pointer;
+            padding: 0px;
             box-shadow: 0px 3px 16px 0px rgba(0, 0, 0, 0.6), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
             display: flex;
             justify-content: center;
