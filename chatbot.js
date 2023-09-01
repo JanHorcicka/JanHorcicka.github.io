@@ -80,12 +80,12 @@ var script = document.createElement('script');script.src = "https://code.jquery.
             cursor:pointer;
           }
           .chat-box-header {
-            background: linear-gradient(to right, #fd5bfb, #313082);
+            background: beige;
             height:70px;
-            color:white;
+            color:black;
             text-align:left;
             font-size:18px;
-            padding:20px 15px 15px 15px;
+            padding:20px 15px 15px 18px;
             user-select: none;
           }
           .chat-box-body {
@@ -139,10 +139,10 @@ var script = document.createElement('script');script.src = "https://code.jquery.
             color: #ccc;
           }
           .chat-submit {
-            color: white;
+            color: black;
             box-shadow:none;
             border:none;
-            background: linear-gradient(to right, #fd5bfb, #313082);
+            background: beige;
             width:20%; /* change this */
             font-size:12px;
           }
