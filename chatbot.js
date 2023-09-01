@@ -30,32 +30,24 @@ var script = document.createElement('script');script.src = "https://code.jquery.
             height:100%;
           }
           #chat-circle {
-            position: fixed;
-            bottom: 50px;
-            right: 50px;
-            width: 80px;
-            height: 80px;  
-            border-radius: 50%;
-            color: white;
-            cursor: pointer;
-            padding: 0px;
-            box-shadow: 0px 3px 16px 0px rgba(0, 0, 0, 0.6), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+            box-shadow: 0px 3px 16px 0px rgba(0, 0, 0, 0.2), 0 3px 1px -2px rgba(0, 0, 0, 0.1), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size:2em;
-            z-index: 50;
+            width: 80px;
+            height: 80px;
+            background: white;
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            border-radius: 50%;
+            z-index: 999;
+            color: white;
+            cursor: pointer;
+            font-size: 2em;
+            padding: 2px 6px;
           }
-          
-          .btn#my-btn {
-               background: white;
-              padding-top: 13px;
-              padding-bottom: 12px;
-              border-radius: 45px;
-              padding-right: 40px;
-              padding-left: 40px;
-              color: #5865C3;
-          }
+
           #chat-overlay {
               background: rgba(255,255,255,0.1);
               position: absolute;
@@ -80,7 +72,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
           /*   box-shadow: 0px 5px 35px 9px #464a92; */
             bottom: 0px; /* Stick the chat box to the bottom of the page */
             border: 2px solid black;
-            z-index: 50;
+            z-index: 999;
           }
           .chat-box-toggle {
             float:right;
@@ -99,7 +91,6 @@ var script = document.createElement('script');script.src = "https://code.jquery.
           .chat-box-body {
             position: relative;  
             height:370px;  
-            height:auto;
             border:1px solid #ccc;  
             overflow: hidden;
           }
@@ -109,7 +100,6 @@ var script = document.createElement('script');script.src = "https://code.jquery.
             opacity: 0.1;
             top: 0;
             left: 0;
-            bottom: 0;
             right: 0;
             height:100%;
             position: absolute;
@@ -157,10 +147,11 @@ var script = document.createElement('script');script.src = "https://code.jquery.
             font-size:12px;
           }
           .chat-logs {
+            display: flex;
+            flex-direction: column-reverse;
             padding:15px; 
             height:370px;
             word-wrap: break-word;
-            user-select: none;
             overflow-y: scroll;
             font-size:13px;
           }
@@ -182,8 +173,6 @@ var script = document.createElement('script');script.src = "https://code.jquery.
               background-color: #5A5EB9;
           }
           
-          
-          
           @media only screen and (max-width: 500px) {
              .chat-logs {
                   height:40vh;
@@ -195,14 +184,12 @@ var script = document.createElement('script');script.src = "https://code.jquery.
             height:45px;
             border-radius:50%;
             float:left;
-            width:15%;
           }
           .chat-msg.self > .msg-avatar img {
             width:45px;
             height:45px;
             border-radius:50%;
             float:right;
-            width:15%;
           }
           .cm-msg-text {
             background:white;
@@ -223,15 +210,6 @@ var script = document.createElement('script');script.src = "https://code.jquery.
             margin-right:10px;
             background: #5A5EB9;
             color:white;
-          }
-          .cm-msg-button>ul>li {
-            list-style:none;
-            float:left;
-            width:50%;
-          }
-          .cm-msg-button {
-              clear: both;
-              margin-bottom: 70px;
           }
           .form-container {
             display: flex;
@@ -278,11 +256,27 @@ var script = document.createElement('script');script.src = "https://code.jquery.
           .dot:nth-child(3) {
               animation-delay: 0.6s;
           }
-          #chatbot-icon {
-            width: 100%;  /* Adjust as needed */
-            height: 100%;  /* Adjust as needed */
+
+          .spacer {
+            flex-grow: 1;
           }
 
+          #chatbot-icon {
+            width: 90%;  /* Adjust as needed */
+            height: 90%;  /* Adjust as needed */
+          }
+
+          .svg-cls-1 {
+            fill: #cfe1ff;
+          }
+
+          .svg-cls-2 {
+              fill: none;
+              stroke: #0b2959;
+              stroke-linecap: round;
+              stroke-linejoin: round;
+              stroke-width: 2px;
+          }
         `;
         var style = document.createElement('style');
         style.type = 'text/css';
@@ -293,51 +287,36 @@ var script = document.createElement('script');script.src = "https://code.jquery.
         var html = `
         
   <div id="chat-bot-body"> 
-            
         <div id="chat-circle" class="btn btn-raised">
-          <div id="chat-overlay"></div>
-            <button id="chat-circle" class="btn btn-raised">  
               <svg id="chatbot-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-                <defs>
-                  <style>
-                    .cls-1 {
-                      fill: #cfe1ff;
-                    }
-              
-                    .cls-2 {
-                      fill: none;
-                      stroke: #0b2959;
-                      stroke-linecap: round;
-                      stroke-linejoin: round;
-                      stroke-width: 2px;
-                    }
-                  </style>
-                </defs>
-                <circle class="cls-1" cx="47.94" cy="35.52" r="13.5"/>
-                <path class="cls-2" d="m21.17,16.71v3.88c0,.65.26,1.27.72,1.73l2.05,2.05c.38.38.11,1.02-.42,1.02H7.83c-1.35,0-2.45-1.1-2.45-2.45v-6.23c0-1.35,1.1-2.45,2.45-2.45h10.89c1.35,0,2.45,1.1,2.45,2.45Z"/>
-                <line class="cls-2" x1="16.5" y1="19.79" x2="16.55" y2="19.79"/>
-                <line class="cls-2" x1="9.85" y1="19.79" x2="12.9" y2="19.79"/>
-                <path class="cls-2" d="m42.83,9.16v3.88c0,.65-.26,1.27-.72,1.73l-2.05,2.05c-.38.38-.11,1.02.42,1.02h15.68c1.35,0,2.45-1.1,2.45-2.45v-6.23c0-1.35-1.1-2.45-2.45-2.45h-10.89c-1.35,0-2.45,1.1-2.45,2.45Z"/>
-                <line class="cls-2" x1="50.5" y1="12.25" x2="47.45" y2="12.25"/>
-                <line class="cls-2" x1="54.15" y1="12.25" x2="54.1" y2="12.25"/>
-                <line class="cls-2" x1="26.86" y1="48.91" x2="26.86" y2="45.35"/>
-                <line class="cls-2" x1="38.26" y1="45.35" x2="38.26" y2="48.91"/>
-                <path class="cls-2" d="m23.16,23.57c1.86-1.76,4.22-3,6.84-3.5"/>
-                <path class="cls-2" d="m34.83,20.02c6.47,1.08,11.41,6.71,11.41,13.49v8.56c0,1.26-1.02,2.28-2.28,2.28h-22.79c-1.26,0-2.28-1.02-2.28-2.28v-8.56c0-2.84.87-5.48,2.35-7.67"/>
-                <circle class="cls-2" cx="32.56" cy="17.72" r="2.99"/>
-                <path class="cls-2" d="m46.23,31.39h.93c.82,0,1.49.66,1.49,1.49v6.15c0,.82-.66,1.49-1.49,1.49h-.93"/>
-                <path class="cls-2" d="m18.89,31.39h-.93c-.82,0-1.49.66-1.49,1.49v6.15c0,.82.66,1.49,1.49,1.49h.93"/>
-                <g>
-                  <line class="cls-2" x1="36.67" y1="27.25" x2="36.67" y2="28.69"/>
-                  <line class="cls-2" x1="28.78" y1="27.25" x2="28.78" y2="28.69"/>
-                </g>
-                <path class="cls-2" d="m40.1,34.9c.17-.62.25-1.26.25-1.91,0-.35-.28-.64-.64-.64h-13.98c-.35,0-.64.28-.64.64,0,.64.09,1.28.25,1.91"/>
-                <path class="cls-2" d="m25.35,34.9c1.05,4.07,5.21,6.52,9.28,5.46,2.68-.69,4.77-2.79,5.46-5.46"/>
-                <path class="cls-2" d="m16.49,49.47h32.15c1.66,0,3,1.34,3,3v4.92H13.49v-4.92c0-1.66,1.34-3,3-3Z"/>
-                <line class="cls-2" x1="25.69" y1="35.87" x2="39.33" y2="35.87"/>
-                <line class="cls-2" x1="14.39" y1="54.27" x2="50.94" y2="54.27"/>
+                  <circle class="svg-cls-1" cx="47.94" cy="35.52" r="13.5"/>
+                  <path class="svg-cls-2"
+                        d="m21.17,16.71v3.88c0,.65.26,1.27.72,1.73l2.05,2.05c.38.38.11,1.02-.42,1.02H7.83c-1.35,0-2.45-1.1-2.45-2.45v-6.23c0-1.35,1.1-2.45,2.45-2.45h10.89c1.35,0,2.45,1.1,2.45,2.45Z"/>
+                  <line class="svg-cls-2" x1="16.5" y1="19.79" x2="16.55" y2="19.79"/>
+                  <line class="svg-cls-2" x1="9.85" y1="19.79" x2="12.9" y2="19.79"/>
+                  <path class="svg-cls-2"
+                        d="m42.83,9.16v3.88c0,.65-.26,1.27-.72,1.73l-2.05,2.05c-.38.38-.11,1.02.42,1.02h15.68c1.35,0,2.45-1.1,2.45-2.45v-6.23c0-1.35-1.1-2.45-2.45-2.45h-10.89c-1.35,0-2.45,1.1-2.45,2.45Z"/>
+                  <line class="svg-cls-2" x1="50.5" y1="12.25" x2="47.45" y2="12.25"/>
+                  <line class="svg-cls-2" x1="54.15" y1="12.25" x2="54.1" y2="12.25"/>
+                  <line class="svg-cls-2" x1="26.86" y1="48.91" x2="26.86" y2="45.35"/>
+                  <line class="svg-cls-2" x1="38.26" y1="45.35" x2="38.26" y2="48.91"/>
+                  <path class="svg-cls-2" d="m23.16,23.57c1.86-1.76,4.22-3,6.84-3.5"/>
+                  <path class="svg-cls-2"
+                        d="m34.83,20.02c6.47,1.08,11.41,6.71,11.41,13.49v8.56c0,1.26-1.02,2.28-2.28,2.28h-22.79c-1.26,0-2.28-1.02-2.28-2.28v-8.56c0-2.84.87-5.48,2.35-7.67"/>
+                  <circle class="svg-cls-2" cx="32.56" cy="17.72" r="2.99"/>
+                  <path class="svg-cls-2" d="m46.23,31.39h.93c.82,0,1.49.66,1.49,1.49v6.15c0,.82-.66,1.49-1.49,1.49h-.93"/>
+                  <path class="svg-cls-2" d="m18.89,31.39h-.93c-.82,0-1.49.66-1.49,1.49v6.15c0,.82.66,1.49,1.49,1.49h.93"/>
+                  <g>
+                      <line class="svg-cls-2" x1="36.67" y1="27.25" x2="36.67" y2="28.69"/>
+                      <line class="svg-cls-2" x1="28.78" y1="27.25" x2="28.78" y2="28.69"/>
+                  </g>
+                  <path class="svg-cls-2"
+                        d="m40.1,34.9c.17-.62.25-1.26.25-1.91,0-.35-.28-.64-.64-.64h-13.98c-.35,0-.64.28-.64.64,0,.64.09,1.28.25,1.91"/>
+                  <path class="svg-cls-2" d="m25.35,34.9c1.05,4.07,5.21,6.52,9.28,5.46,2.68-.69,4.77-2.79,5.46-5.46"/>
+                  <path class="svg-cls-2" d="m16.49,49.47h32.15c1.66,0,3,1.34,3,3v4.92H13.49v-4.92c0-1.66,1.34-3,3-3Z"/>
+                  <line class="svg-cls-2" x1="25.69" y1="35.87" x2="39.33" y2="35.87"/>
+                  <line class="svg-cls-2" x1="14.39" y1="54.27" x2="50.94" y2="54.27"/>
               </svg>
-            </button>
           </div>
           
           <div class="chat-box">
