@@ -21,14 +21,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
             height:100%;
             visibility: hidden;
           }
-          #center-text {          
-            display: flex;
-            flex: 1;
-            flex-direction:column; 
-            justify-content: center;
-            align-items: center;  
-            height:100%;
-          }
+
           #chat-circle {
             box-shadow: 0px 3px 16px 0px rgba(0, 0, 0, 0.2), 0 3px 1px -2px rgba(0, 0, 0, 0.1), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
             display: flex;
@@ -277,6 +270,29 @@ var script = document.createElement('script');script.src = "https://code.jquery.
               stroke-linejoin: round;
               stroke-width: 2px;
           }
+          .chat-self {
+            align-self: flex-end;
+            max-width: 70%;
+            width: auto;
+            margin: 15px 8px;
+            padding: 8px 10px;
+            background: rgb(235, 235, 235);
+            border-radius: 10px 10px 10px;
+            box-shadow: rgba(50, 50, 50, 0.2) 4px 4px 5px 0px;
+            word-break: break-word;
+          }
+
+          .chat-friend {
+            align-self: flex-start;
+            max-width: 70%;
+            width: auto;
+            margin: 15px 8px;
+            padding: 8px 10px;
+            background: rgb(255, 255, 255);
+            border-radius: 10px 10px 10px 0px;
+            box-shadow: rgba(50, 50, 50, 0.2) 4px 4px 5px 0px;
+            word-break: break-word;
+          }
         `;
         var style = document.createElement('style');
         style.type = 'text/css';
@@ -286,8 +302,8 @@ var script = document.createElement('script');script.src = "https://code.jquery.
         // Inject HTML
         var html = `
         
-  <div id="chat-bot-body"> 
-        <div id="chat-circle" class="btn btn-raised">
+ <div id="chat-bot-body">
+          <div id="chat-circle" class="btn btn-raised visible">
               <svg id="chatbot-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
                   <circle class="svg-cls-1" cx="47.94" cy="35.52" r="13.5"/>
                   <path class="svg-cls-2"
@@ -318,33 +334,33 @@ var script = document.createElement('script');script.src = "https://code.jquery.
                   <line class="svg-cls-2" x1="14.39" y1="54.27" x2="50.94" y2="54.27"/>
               </svg>
           </div>
-          
-          <div class="chat-box">
-            <div class="chat-box-header">
-              Váš AI asistent
-              <span class="chat-box-toggle">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="15" y1="9" x2="9" y2="15"></line>
-                <line x1="9" y1="9" x2="15" y2="15"></line>
-              </svg>
-            </span>
-            </div>
-            <div class="chat-box-body">
-              <div class="chat-box-overlay">   
+
+          <div class="chat-box hidden">
+              <div class="chat-box-header">
+                  Váš AI asistent
+                  <span class="chat-box-toggle">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                          stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-x-circle">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <line x1="15" y1="9" x2="9" y2="15"></line>
+                          <line x1="9" y1="9" x2="15" y2="15"></line>
+                      </svg>
+                  </span>
               </div>
-              <div class="chat-logs">
-                  <div class="spacer"></div>
-              </div><!--chat-log -->
-            </div>
-            <div class="chat-input">      
-                <form class="form-container">
-                    <textarea id="chat-input" placeholder="Napište zprávu..."></textarea>
-                    <button type="submit" class="chat-submit" id="chat-submit"><i class="material-icons">Odeslat</i></button>
-                </form>      
-            </div>
+              <div class="chat-box-body">
+                  <div class="chat-logs">
+                      <div class="spacer"></div>
+                  </div><!--chat-log -->
+              </div>
+              <div class="chat-input">
+                  <form class="form-container">
+                      <textarea id="chat-input" placeholder="Napište zprávu..."></textarea>
+                      <button type="submit" class="chat-submit" id="chat-submit"><i>Odeslat</i>
+                      </button>
+                  </form>
+              </div>
           </div>
-        </div>
+      </div>
           `;
           var div = document.createElement('div');
           div.innerHTML = html;
@@ -361,50 +377,85 @@ var script = document.createElement('script');script.src = "https://code.jquery.
 
     $(document).ready(function() {
             
-    // Time to keep chat history in milliseconds (e.g., 24 hours = 86400000 ms)
-    const EXPIRATION_TIME = 86400000; 
-
-    const SHOW_BOT = true;
-    let chatHistory = [];
-    let greeted = false;
-
-    const chatLogs = $('.chat-logs');
-    const chatInput = $('#chat-input');
-    const chatSubmit = $('#chat-submit');
-
-    if (SHOW_BOT) {
-        $("#chat-bot-body").css("visibility", "visible");
-    }
-
-    loadChatHistory();
-
-    chatInput.on('keypress', handleKeyPress);
-    chatSubmit.on('click', sendMessage);
-
-    $("#chat-circle").click(function() {
-        toggleChat('#chat-circle');
-    });
-
-    $(".chat-box-toggle").click(function() {
-        toggleChat('.chat-box-toggle');
-    });
-
-    function toggleChat(clickedElement) {
-        if (clickedElement === '#chat-circle' || clickedElement === '.chat-box-toggle') {
-            $("#chat-circle, .chat-box").toggle('scale');
-            scrollToTheBottom();
-            if (!greeted) {
-                greetUser(true);
+        // Time to keep chat history in milliseconds (e.g., 24 hours = 86400000 ms)
+        const EXPIRATION_TIME = 86400000; 
+    
+        const SHOW_BOT = true;
+        let chatHistory = [];
+        let greeted = false;
+    
+        const chatLogs = $('.chat-logs');
+        const chatInput = $('#chat-input');
+        const chatSubmit = $('#chat-submit');
+    
+        if (SHOW_BOT) {
+            $("#chat-bot-body").css("visibility", "visible");
+        }
+    
+        loadChatHistory();
+    
+        chatInput.on('keypress', handleKeyPress);
+        chatSubmit.on('click', sendMessage);
+    
+        $("#chat-circle").click(function() {
+            toggleChat();
+        });
+    
+        $(".chat-box-toggle").click(function() {
+            toggleChat();
+        });
+    
+        function toggleChat() {
+          const chatCircle = document.getElementById('chat-circle');
+          const chatBox = document.querySelector('.chat-box');
+    
+          // Function to handle the end of a transition
+          function handleTransitionEnd(event) {
+            if (event.propertyName === 'opacity') {
+              const layout = this.id === 'chat-circle' ? 'flex' : 'block';
+              this.style.display = this.classList.contains('hidden') ? 'none' : layout;
+              this.removeEventListener('transitionend', handleTransitionEnd);
+            }
+          }
+    
+          // Toggle chat circle
+          chatCircle.addEventListener('transitionend', handleTransitionEnd);
+          if (chatCircle.classList.contains('hidden')) {
+            chatCircle.style.display = 'flex'; // Make it block before starting the transition
+            setTimeout(() => {
+              chatCircle.classList.toggle('visible');
+              chatCircle.classList.toggle('hidden');
+            }, 0);
+          } else {
+            chatCircle.classList.toggle('visible');
+            chatCircle.classList.toggle('hidden');
+          }
+    
+          // Toggle chat box
+          chatBox.addEventListener('transitionend', handleTransitionEnd);
+          if (chatBox.classList.contains('hidden')) {
+            chatBox.style.display = 'block'; // Make it block before starting the transition
+            setTimeout(() => {
+              chatBox.classList.toggle('visible');
+              chatBox.classList.toggle('hidden');
+            }, 0);
+          } else {
+            chatBox.classList.toggle('visible');
+            chatBox.classList.toggle('hidden');
+          }
+    
+          scrollToTheBottom();
+          if (!greeted) {
+            greetUser(true);
+          }
+        }
+    
+        function handleKeyPress(e) {
+            if (e.which === 13 && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
             }
         }
-    }
-
-    function handleKeyPress(e) {
-        if (e.which === 13 && !e.shiftKey) {
-            e.preventDefault();
-            sendMessage();
-        }
-    }
 
     function sendMessage() {
         const message = chatInput.val();
@@ -469,6 +520,15 @@ var script = document.createElement('script');script.src = "https://code.jquery.
         });
     }
 
+    function renderMessage(message, type) {
+      var messageDiv = '<div class="chat-self"><div class="icon"><i class="material-icons"><b>' + (type === 'HumanMessage' ? 'Vy' : 'Chatbot') + '</b></i></div><div class="chat-message">' + message + '</div></div>'
+      prependMessage(messageDiv);
+    }
+
+    function createMessageElement(message, senderName, className) {
+        return $('<div class="chat-' + className + '"><div class="icon"><i class="material-icons"><b>' + senderName + '</b></i></div><div class="chat-message">' + message + '</div></div>');
+    }
+
     function greetUser(shouldTypeMessage) {
         var greeting = "Dobrý den, jsem asistenční robot Moia. Rád vám poradím s výběrem krému. Ptejte se...";
         var messageElement = $('<div class="chat-friend"><div class="icon"><i class="material-icons"><b>Chatbot</b></i></div><div class="chat-message"></div></div>');
@@ -477,38 +537,31 @@ var script = document.createElement('script');script.src = "https://code.jquery.
             typeMessage(greeting, messageElement.find('.chat-message'));
         }
         else {
-            prependMessage(greeting);
+            messageElement.append(greeting);
         }
         greeted = true;
     }
 
     function typeMessage(message, element) {
         var i = 0;
+        var tempMessage = "";
         function typeWriter() {
             if (i < message.length) {
-                element.append(message.charAt(i));
+                tempMessage += message.charAt(i);
+                element.text(tempMessage);  // Use .text() to update the entire text content
                 i++;
                 // Scroll to the bottom of the chat logs
                 scrollToTheBottom();
-                setTimeout(typeWriter, 5); // adjust the speed of typing here
+                requestAnimationFrame(typeWriter);
             }
         }
-        setTimeout(typeWriter, 500); // start typing after 1 second
+        requestAnimationFrame(typeWriter);
     }
 
     function clearChatHistory() {
         localStorage.removeItem('chatHistory');
         chatHistory = [];
         $('.chat-logs').html('');
-    }
-
-    function renderMessage(message, type) {
-        var messageDiv = '<div class="chat-self"><div class="icon"><i class="material-icons"><b>' + (type === 'HumanMessage' ? 'Vy' : 'Chatbot') + '</b></i></div><div class="chat-message">' + message + '</div></div>'
-        prependMessage(messageDiv);
-    }
-
-    function createMessageElement(message, senderName, className) {
-        return $('<div class="chat-' + className + '"><div class="icon"><i class="material-icons"><b>' + senderName + '</b></i></div><div class="chat-message">' + message + '</div></div>');
     }
 
     function createTypingIndicator() {
