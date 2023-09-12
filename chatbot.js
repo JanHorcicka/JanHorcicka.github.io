@@ -472,7 +472,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
         scrollToTheBottom();
 
         $.ajax({
-            url: 'https://metaexponential.pythonanywhere.com/api',
+            url: 'https://metaexponential.eu.pythonanywhere.com/api',
             method: 'POST',
             contentType: 'application/json',
             data: JSON.stringify({
@@ -495,7 +495,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
                 // Write the answer to the window
                 var messageElement = $('<div class="chat-friend"><div class="icon"><i class="material-icons"><b>Chatbot</b></i></div><div class="chat-message"></div></div>');
                 $('.chat-logs').prepend(messageElement);
-                typeMessage(answer, messageElement.find('.chat-message'));
+                typeMessage(urlify(answer), messageElement.find('.chat-message'));
 
                 // Re-enable the input and submit button
                 setFormAvailability(false);
@@ -513,12 +513,19 @@ var script = document.createElement('script');script.src = "https://code.jquery.
                     const response = JSON.parse(jqXHR.responseText);
                     error_message = response.message;
                 }
-                var errorMessageElement = $('<div class="chat-friend"><div class="icon"><i class="material-icons"><b>Chatbot</b></i></div><div class="chat-message"></div></div>');
+                var errorMessageElement = $('<div class="chat-friend"><div class="icon"><i class="material-icons"><b>Chatbot</b></i></div><div class="chat-message">' + error_message + '</div></div>');
                 prependMessage(errorMessageElement);
-                prependMessage(error_message);
             }
         });
     }
+
+    function urlify(text) {
+      var urlRegex = /\[(https?:\/\/[^\s]+)\]/g;
+      return text.replace(urlRegex, function(_, url) {
+          return '<a href="' + url + '">' + url + '</a>';
+      });
+    }
+
 
     function renderMessage(message, type) {
       var messageDiv = '<div class="chat-self"><div class="icon"><i class="material-icons"><b>' + (type === 'HumanMessage' ? 'Vy' : 'Chatbot') + '</b></i></div><div class="chat-message">' + message + '</div></div>'
@@ -543,20 +550,41 @@ var script = document.createElement('script');script.src = "https://code.jquery.
     }
 
     function typeMessage(message, element) {
-        var i = 0;
-        var tempMessage = "";
-        function typeWriter() {
-            if (i < message.length) {
-                tempMessage += message.charAt(i);
-                element.text(tempMessage);  // Use .text() to update the entire text content
-                i++;
-                // Scroll to the bottom of the chat logs
-                scrollToTheBottom();
-                requestAnimationFrame(typeWriter);
-            }
-        }
-        requestAnimationFrame(typeWriter);
-    }
+      var i = 0;
+      var tempMessage = "";
+      var isInsideTag = false;
+      var tagBuffer = "";
+  
+      function typeWriter() {
+          if (i < message.length) {
+              var char = message.charAt(i);
+  
+              if (char === '<') {
+                  isInsideTag = true;
+              }
+  
+              if (isInsideTag) {
+                  tagBuffer += char;
+              } else {
+                  tempMessage += char;
+              }
+  
+              if (char === '>') {
+                  isInsideTag = false;
+                  tempMessage += tagBuffer;
+                  tagBuffer = "";
+              }
+  
+              element.html(tempMessage);  // Use .html() to update the entire text content
+              i++;
+  
+              // Scroll to the bottom of the chat logs
+              scrollToTheBottom();
+              requestAnimationFrame(typeWriter);
+          }
+      }
+      requestAnimationFrame(typeWriter);
+  }
 
     function clearChatHistory() {
         localStorage.removeItem('chatHistory');
@@ -608,7 +636,8 @@ var script = document.createElement('script');script.src = "https://code.jquery.
         chatHistory.forEach(function(entry) {
             const type = Object.keys(entry)[0];
             const message = entry[type];
-            renderMessage(message, type);
+            const messageWithLinks = urlify(message);
+            renderMessage(messageWithLinks, type);
         });
     }
 
