@@ -520,10 +520,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
     }
 
     function urlify(text) {
-      var urlRegex = /\[(https?:\/\/[^\s]+)\]/g;
-      return text.replace(urlRegex, function(_, url) {
-          return '<a href="' + url + '">' + url + '</a>';
-      });
+      return text;
     }
 
 
