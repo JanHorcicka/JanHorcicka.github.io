@@ -490,7 +490,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
             scrollToTheBottom();
 
             $.ajax({
-                url: ''http://metaexponential.eu.pythonanywhere.com/api',
+                url: 'http://metaexponential.eu.pythonanywhere.com/api',
                 method: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({
