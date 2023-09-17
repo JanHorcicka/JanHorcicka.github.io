@@ -542,8 +542,10 @@ var script = document.createElement('script');script.src = "https://code.jquery.
         }
 
         function renderMessage(message, type) {
-          var messageDiv = '<div class="chat-self"><div class="icon"><i class="material-icons"><b>' + (type === 'HumanMessage' ? 'Vy' : 'Chatbot') + '</b></i></div><div class="chat-message">' + message + '</div></div>'
-          prependMessage(messageDiv);
+            const clazz = type === 'HumanMessage' ? 'chat-self' : 'chat-friend';
+            const title = type === 'HumanMessage' ? 'Vy' : 'Chatbot';
+            var messageDiv = '<div class="' + clazz + '"><div class="icon"><i class="material-icons"><b>' + title + '</b></i></div><div class="chat-message">' + message + '</div></div>'
+            prependMessage(messageDiv);
         }
 
         function createMessageElement(message, senderName, className) {
