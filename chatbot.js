@@ -143,9 +143,9 @@ var script = document.createElement('script');script.src = "https://code.jquery.
             display: flex;
             flex-direction: column-reverse;
             padding:15px; 
-            height:370px;
+            height:100%;
             word-wrap: break-word;
-            overflow-y: scroll;
+            overflow-y: auto;
             font-size:13px;
           }
           
@@ -293,6 +293,23 @@ var script = document.createElement('script');script.src = "https://code.jquery.
             box-shadow: rgba(50, 50, 50, 0.2) 4px 4px 5px 0px;
             word-break: break-word;
           }
+
+          #chat-circle, .chat-box {
+            transition: opacity 0.3s, transform 0.3s;
+            transform-origin: bottom right; /* This will make it scale towards the bottom right */
+          }
+          
+          .visible {
+            opacity: 1;
+            transform: scale(1);
+            display: block;
+          }
+          
+          .hidden {
+            opacity: 0;
+            transform: scale(0);
+            display: none; /* Initially hidden */
+          }
         `;
         var style = document.createElement('style');
         style.type = 'text/css';
@@ -376,39 +393,40 @@ var script = document.createElement('script');script.src = "https://code.jquery.
           script.innerHTML = `  
 
     $(document).ready(function() {
-            
+        // Change to "false" to hide chatbot
+        const SHOW_BOT = true;
+
         // Time to keep chat history in milliseconds (e.g., 24 hours = 86400000 ms)
         const EXPIRATION_TIME = 86400000; 
-    
-        const SHOW_BOT = true;
+        
         let chatHistory = [];
         let greeted = false;
-    
+
         const chatLogs = $('.chat-logs');
         const chatInput = $('#chat-input');
         const chatSubmit = $('#chat-submit');
-    
+
         if (SHOW_BOT) {
             $("#chat-bot-body").css("visibility", "visible");
         }
-    
+
         loadChatHistory();
-    
+
         chatInput.on('keypress', handleKeyPress);
         chatSubmit.on('click', sendMessage);
-    
+
         $("#chat-circle").click(function() {
             toggleChat();
         });
-    
+
         $(".chat-box-toggle").click(function() {
             toggleChat();
         });
-    
+
         function toggleChat() {
           const chatCircle = document.getElementById('chat-circle');
           const chatBox = document.querySelector('.chat-box');
-    
+
           // Function to handle the end of a transition
           function handleTransitionEnd(event) {
             if (event.propertyName === 'opacity') {
@@ -417,7 +435,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
               this.removeEventListener('transitionend', handleTransitionEnd);
             }
           }
-    
+
           // Toggle chat circle
           chatCircle.addEventListener('transitionend', handleTransitionEnd);
           if (chatCircle.classList.contains('hidden')) {
@@ -430,7 +448,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
             chatCircle.classList.toggle('visible');
             chatCircle.classList.toggle('hidden');
           }
-    
+
           // Toggle chat box
           chatBox.addEventListener('transitionend', handleTransitionEnd);
           if (chatBox.classList.contains('hidden')) {
@@ -443,13 +461,13 @@ var script = document.createElement('script');script.src = "https://code.jquery.
             chatBox.classList.toggle('visible');
             chatBox.classList.toggle('hidden');
           }
-    
+
           scrollToTheBottom();
           if (!greeted) {
             greetUser(true);
           }
         }
-    
+
         function handleKeyPress(e) {
             if (e.which === 13 && !e.shiftKey) {
                 e.preventDefault();
@@ -457,190 +475,189 @@ var script = document.createElement('script');script.src = "https://code.jquery.
             }
         }
 
-    function sendMessage() {
-        const message = chatInput.val();
-        if (message.length === 0) { return; }
-        chatInput.val('');
-        setFormAvailability(true);
+        function sendMessage() {
+            const message = chatInput.val();
+            if (message.length === 0) { return; }
+            chatInput.val('');
+            setFormAvailability(true);
 
-        const messageElement = createMessageElement(message, 'Vy', 'self');
-        prependMessage(messageElement);
+            const messageElement = createMessageElement(message, 'Vy', 'self');
+            prependMessage(messageElement);
 
-        const typingIndicator = createTypingIndicator();
-        prependMessage(typingIndicator);
+            const typingIndicator = createTypingIndicator();
+            prependMessage(typingIndicator);
 
-        scrollToTheBottom();
+            scrollToTheBottom();
 
-        $.ajax({
-            url: 'https://metaexponential.eu.pythonanywhere.com/api',
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                question: message,
-                chat_history: chatHistory
-            }),
-            dataType: 'json',
-            success: function(data) {
-                var answer = data.answer;
+            $.ajax({
+                url: ''https://metaexponential.eu.pythonanywhere.com/api',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    question: message,
+                    chat_history: chatHistory
+                }),
+                dataType: 'json',
+                success: function(data) {
+                    var answer = data.answer;
 
-                typingIndicator.remove();
+                    typingIndicator.remove();
 
-                // Update chat history
-                chatHistory.push({ 'HumanMessage': message });
-                chatHistory.push({ 'AIMessage': answer });
+                    // Update chat history
+                    chatHistory.push({ 'HumanMessage': message });
+                    chatHistory.push({ 'AIMessage': answer });
 
-                // Save chat history
-                saveChatHistory();
+                    // Save chat history
+                    saveChatHistory();
 
-                // Write the answer to the window
-                var messageElement = $('<div class="chat-friend"><div class="icon"><i class="material-icons"><b>Chatbot</b></i></div><div class="chat-message"></div></div>');
-                $('.chat-logs').prepend(messageElement);
-                typeMessage(urlify(answer), messageElement.find('.chat-message'));
+                    // Write the answer to the window
+                    var messageElement = $('<div class="chat-friend"><div class="icon"><i class="material-icons"><b>Chatbot</b></i></div><div class="chat-message"></div></div>');
+                    $('.chat-logs').prepend(messageElement);
+                    typeMessage(urlify(answer), messageElement.find('.chat-message'));
 
-                // Re-enable the input and submit button
-                setFormAvailability(false);
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.log(textStatus, errorThrown);
-                // Remove typing indicator in case of error
-                typingIndicator.remove();
+                    // Re-enable the input and submit button
+                    setFormAvailability(false);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown);
+                    // Remove typing indicator in case of error
+                    typingIndicator.remove();
 
-                // Re-enable the input and submit button
-                setFormAvailability(false);
+                    // Re-enable the input and submit button
+                    setFormAvailability(false);
 
-                let error_message = 'Error! Vyskytla se chyba! Prosíme použijte kontaktní formulář.';
-                if (jqXHR.status === 429) {
-                    const response = JSON.parse(jqXHR.responseText);
-                    error_message = response.message;
+                    let error_message = 'Error! Vyskytla se chyba! Prosíme použijte kontaktní formulář.';
+                    if (jqXHR.status === 429) {
+                      const response = JSON.parse(jqXHR.responseText);
+                      error_message = response.message;
+                    }
+                    var errorMessageElement = $('<div class="chat-friend"><div class="icon"><i class="material-icons"><b>Chatbot</b></i></div><div class="chat-message">' + error_message + '</div></div>');
+                    prependMessage(errorMessageElement);
                 }
-                var errorMessageElement = $('<div class="chat-friend"><div class="icon"><i class="material-icons"><b>Chatbot</b></i></div><div class="chat-message">' + error_message + '</div></div>');
-                prependMessage(errorMessageElement);
+            });
+        }
+
+        function urlify(text) {
+          return text;
+        }
+
+        function renderMessage(message, type) {
+          var messageDiv = '<div class="chat-self"><div class="icon"><i class="material-icons"><b>' + (type === 'HumanMessage' ? 'Vy' : 'Chatbot') + '</b></i></div><div class="chat-message">' + message + '</div></div>'
+          prependMessage(messageDiv);
+        }
+
+        function createMessageElement(message, senderName, className) {
+            return $('<div class="chat-' + className + '"><div class="icon"><i class="material-icons"><b>' + senderName + '</b></i></div><div class="chat-message">' + message + '</div></div>');
+        }
+
+        function greetUser(shouldTypeMessage) {
+            var greeting = "Dobrý den, jsem asistenční robot Moia. Rád vám poradím s výběrem krému. Ptejte se...";
+            var messageElement = $('<div class="chat-friend"><div class="icon"><i class="material-icons"><b>Chatbot</b></i></div><div class="chat-message"></div></div>');
+            $('.chat-logs').prepend(messageElement);
+            if (shouldTypeMessage) {
+                typeMessage(greeting, messageElement.find('.chat-message'));
             }
-        });
-    }
-
-    function urlify(text) {
-      return text;
-    }
-
-
-    function renderMessage(message, type) {
-      var messageDiv = '<div class="chat-self"><div class="icon"><i class="material-icons"><b>' + (type === 'HumanMessage' ? 'Vy' : 'Chatbot') + '</b></i></div><div class="chat-message">' + message + '</div></div>'
-      prependMessage(messageDiv);
-    }
-
-    function createMessageElement(message, senderName, className) {
-        return $('<div class="chat-' + className + '"><div class="icon"><i class="material-icons"><b>' + senderName + '</b></i></div><div class="chat-message">' + message + '</div></div>');
-    }
-
-    function greetUser(shouldTypeMessage) {
-        var greeting = "Dobrý den, jsem asistenční robot Moia. Rád vám poradím s výběrem krému. Ptejte se...";
-        var messageElement = $('<div class="chat-friend"><div class="icon"><i class="material-icons"><b>Chatbot</b></i></div><div class="chat-message"></div></div>');
-        $('.chat-logs').prepend(messageElement);
-        if (shouldTypeMessage) {
-            typeMessage(greeting, messageElement.find('.chat-message'));
+            else {
+                messageElement.append(greeting);
+            }
+            greeted = true;
         }
-        else {
-            messageElement.append(greeting);
-        }
-        greeted = true;
-    }
 
-    function typeMessage(message, element) {
-      var i = 0;
-      var tempMessage = "";
-      var isInsideTag = false;
-      var tagBuffer = "";
-  
-      function typeWriter() {
-          if (i < message.length) {
-              var char = message.charAt(i);
-  
-              if (char === '<') {
-                  isInsideTag = true;
+        function typeMessage(message, element) {
+          var i = 0;
+          var tempMessage = "";
+          var isInsideTag = false;
+          var tagBuffer = "";
+      
+          function typeWriter() {
+              if (i < message.length) {
+                  var char = message.charAt(i);
+      
+                  if (char === '<') {
+                      isInsideTag = true;
+                  }
+      
+                  if (isInsideTag) {
+                      tagBuffer += char;
+                  } else {
+                      tempMessage += char;
+                  }
+      
+                  if (char === '>') {
+                      isInsideTag = false;
+                      tempMessage += tagBuffer;
+                      tagBuffer = "";
+                  }
+      
+                  element.html(tempMessage);  // Use .html() to update the entire text content
+                  i++;
+      
+                  // Scroll to the bottom of the chat logs
+                  scrollToTheBottom();
+                  requestAnimationFrame(typeWriter);
               }
-  
-              if (isInsideTag) {
-                  tagBuffer += char;
-              } else {
-                  tempMessage += char;
-              }
-  
-              if (char === '>') {
-                  isInsideTag = false;
-                  tempMessage += tagBuffer;
-                  tagBuffer = "";
-              }
-  
-              element.html(tempMessage);  // Use .html() to update the entire text content
-              i++;
-  
-              // Scroll to the bottom of the chat logs
-              scrollToTheBottom();
-              requestAnimationFrame(typeWriter);
           }
+          requestAnimationFrame(typeWriter);
       }
-      requestAnimationFrame(typeWriter);
-  }
 
-    function clearChatHistory() {
-        localStorage.removeItem('chatHistory');
-        chatHistory = [];
-        $('.chat-logs').html('');
-    }
+        function clearChatHistory() {
+            localStorage.removeItem('chatHistory');
+            chatHistory = [];
+            $('.chat-logs').html('');
+        }
 
-    function createTypingIndicator() {
-        return $('<div class="chat-friend"><div class="icon"><i class="material-icons"><b>Chatbot</b></i></div><div class="typing-indicator"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>');
-    }
+        function createTypingIndicator() {
+            return $('<div class="chat-friend"><div class="icon"><i class="material-icons"><b>Chatbot</b></i></div><div class="typing-indicator"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>');
+        }
 
-    function scrollToTheBottom() {
-        chatLogs.scrollTop(0);
-    }
+        function scrollToTheBottom() {
+            chatLogs.scrollTop(0);
+        }
 
-    function setFormAvailability(newState) {
-        chatInput.prop('disabled', newState);
-        chatSubmit.prop('disabled', newState);
-    }
+        function setFormAvailability(newState) {
+            chatInput.prop('disabled', newState);
+            chatSubmit.prop('disabled', newState);
+        }
 
-    function loadChatHistory() {
-        const savedData = localStorage.getItem('chatHistory');
-        if (savedData) {
-            const parsedData = JSON.parse(savedData);
-            const currentTime = new Date().getTime();
-            
-            // Check if the chat history has expired
-            if (currentTime - parsedData.timestamp < EXPIRATION_TIME) {
-                chatHistory = parsedData.chatHistory;
-                renderChatHistory();
-            } else {
-                // If the chat history has expired, remove it from local storage
-                localStorage.removeItem('chatHistory');
+        function loadChatHistory() {
+            const savedData = localStorage.getItem('chatHistory');
+            if (savedData) {
+                const parsedData = JSON.parse(savedData);
+                const currentTime = new Date().getTime();
+                
+                // Check if the chat history has expired
+                if (currentTime - parsedData.timestamp < EXPIRATION_TIME) {
+                    chatHistory = parsedData.chatHistory;
+                    renderChatHistory();
+                } else {
+                    // If the chat history has expired, remove it from local storage
+                    localStorage.removeItem('chatHistory');
+                }
             }
         }
-    }
 
-    function saveChatHistory() {
-        const data = {
-            chatHistory: chatHistory,
-            timestamp: new Date().getTime()
-        };
-        localStorage.setItem('chatHistory', JSON.stringify(data));
-    }
+        function saveChatHistory() {
+            const data = {
+                chatHistory: chatHistory,
+                timestamp: new Date().getTime()
+            };
+            localStorage.setItem('chatHistory', JSON.stringify(data));
+        }
 
-    function renderChatHistory() {
-        chatLogs.html('');
-        greetUser(false);
-        chatHistory.forEach(function(entry) {
-            const type = Object.keys(entry)[0];
-            const message = entry[type];
-            const messageWithLinks = urlify(message);
-            renderMessage(messageWithLinks, type);
-        });
-    }
+        function renderChatHistory() {
+            chatLogs.html('');
+            greetUser(false);
+            chatHistory.forEach(function(entry) {
+                const type = Object.keys(entry)[0];
+                const message = entry[type];
+                const messageWithLinks = urlify(message);
+                renderMessage(messageWithLinks, type);
+            });
+        }
 
-    function prependMessage(messageElement) {
-        chatLogs.prepend(messageElement);
-    }
+        function prependMessage(messageElement) {
+            chatLogs.prepend(messageElement);
+        }
 });
   `;
 
