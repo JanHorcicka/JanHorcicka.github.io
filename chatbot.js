@@ -107,7 +107,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
             resize:none;
             outline:none;
             border:1px solid #ccc;
-            color:#888;
+            color:black;
             border-top:none;
             border-bottom-right-radius:5px;
             border-bottom-left-radius:5px;
