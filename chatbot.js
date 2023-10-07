@@ -385,8 +385,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
           div.style.bottom = '0';  // Position at the bottom of the window
           div.style.right = '0';  // Position at the right of the window
           div.style.zIndex = '5';
-          var referenceNode = document.getElementById('footer');
-          referenceNode.parentNode.insertBefore(div, referenceNode.nextSibling);
+          document.body.appendChild(div);
 
           // Run JavaScript
           var script = document.createElement('script');
