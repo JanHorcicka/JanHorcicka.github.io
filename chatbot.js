@@ -553,7 +553,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
         }
 
         function greetUser(shouldTypeMessage) {
-            var greeting = "Dobrý den, jsem asistenční robot Moia. Rád vám poradím s výběrem krému. Ptejte se...";
+            var greeting = "Dobrý den, jsem asistenční robot poháněný umělou inteligencí. Rád vám poradím s jakýmkoliv dotazem. Ptejte se...";
             var messageElement = $('<div class="chat-friend"><div class="icon"><i class="material-icons"><b>Chatbot</b></i></div><div class="chat-message"></div></div>');
             $('.chat-logs').prepend(messageElement);
             if (shouldTypeMessage) {
