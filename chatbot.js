@@ -73,7 +73,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
             cursor:pointer;
           }
           .chat-box-header {
-            background: beige;
+            background: #ffc807;
             height:70px;
             color:black;
             text-align:left;
@@ -135,7 +135,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
             color: black;
             box-shadow:none;
             border:none;
-            background: beige;
+            background: #ffc807;
             width:20%; /* change this */
             font-size:12px;
           }
