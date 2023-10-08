@@ -74,7 +74,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
           }
           .chat-box-header {
             background: #ffc807;
-            height:70px;
+            height:auto;
             color:black;
             text-align:left;
             font-size:18px;
