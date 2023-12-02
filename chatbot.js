@@ -512,8 +512,9 @@ var script = document.createElement('script');script.src = "https://code.jquery.
                     // Write the answer to the window
                     var messageElement = $('<div class="chat-friend"><div class="icon"><i class="material-icons"><b>Chatbot</b></i></div><div class="chat-message"></div></div>');
                     $('.chat-logs').prepend(messageElement);
+                    answer = removeAssistant(answer);
                     typeMessage(urlify(answer), messageElement.find('.chat-message'));
-
+                    
                     // Re-enable the input and submit button
                     setFormAvailability(false);
                 },
@@ -658,6 +659,11 @@ var script = document.createElement('script');script.src = "https://code.jquery.
 
         function prependMessage(messageElement) {
             chatLogs.prepend(messageElement);
+        }
+
+        function removeAssistant(response) {
+          // Check if the response starts with "Assistant: " and remove it
+          return response.replace(/^Assistant: /, '');
         }
 });
   `;
