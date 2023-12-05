@@ -28,6 +28,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
             justify-content: center;
             align-items: center;
             width: 80px;
+            min-width: 80px;
             height: 80px;
             background: white;
             position: fixed;
