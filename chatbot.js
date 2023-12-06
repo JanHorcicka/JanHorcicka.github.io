@@ -137,7 +137,8 @@ var script = document.createElement('script');script.src = "https://code.jquery.
             color: black;
             box-shadow:none;
             border:none;
-            background: #ffc807;
+            /* background: #ffc807; */
+            background: rgb(109, 124, 105);
             width:20%; /* change this */
             font-size:12px;
           }
