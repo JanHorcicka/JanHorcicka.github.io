@@ -532,6 +532,15 @@ var script = document.createElement('script');script.src = "https://code.jquery.
                       const response = JSON.parse(jqXHR.responseText);
                       error_message = response.message;
                     }
+
+                    // Handle custom server errors
+                    if(jqXHR.responseJSON) {
+                        var errorType = jqXHR.responseJSON.error_type;
+                        if (errorType === 'OutputParserException') {
+                          error_message = 'Bohužel neumím vyhledávat na základě uvedených požadavků. Zkuste, prosím, jinou otázku.';
+                        }
+                    }     
+                    
                     var errorMessageElement = $('<div class="chat-friend"><div class="icon"><i class="material-icons"><b>Chatbot</b></i></div><div class="chat-message">' + error_message + '</div></div>');
                     prependMessage(errorMessageElement);
                 }
