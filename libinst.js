@@ -537,7 +537,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
                     if(jqXHR.responseJSON) {
                         var errorType = jqXHR.responseJSON.error_type;
                         if (errorType === 'OutputParserException') {
-                          error_message = 'Bohužel neumím vyhledávat na základě uvedených požadavků. Zkuste, prosím, jinou otázku.';
+                          error_message = 'Bohužel neumím vyhledávat na základě uvedených požadavků. Umím vyhledávat pouze podle obsahu, autora nebo kategorie. Zkuste, prosím, jinou otázku.';
                         }
                     }     
                     
