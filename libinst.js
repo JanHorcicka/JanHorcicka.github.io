@@ -527,7 +527,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
                     // Re-enable the input and submit button
                     setFormAvailability(false);
 
-                    let error_message = 'Error! Vyskytla se chyba! Prosíme použijte kontaktní formulář.';
+                    let error_message = 'Vyskytla se chyba! Zkuste jinou otázku. Pokud problém přetrvá, použijte prosím kontaktní formulář.';
                     if (jqXHR.status === 429) {
                       const response = JSON.parse(jqXHR.responseText);
                       error_message = response.message;
