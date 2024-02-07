@@ -315,6 +315,12 @@ var script = document.createElement('script');script.src = "https://code.jquery.
             transform: scale(0);
             display: none; /* Initially hidden */
           }
+
+          .sender {
+            padding-bottom: 4px;
+            font-size: 15px;
+            font-weight: 700;
+          }
         `;
         var style = document.createElement('style');
         style.type = 'text/css';
