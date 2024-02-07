@@ -54,6 +54,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
           }
         
           .chat-box {
+            font-family: Poppins,sans-serif;
             display:none;
             background: #efefef;
             position:fixed;
