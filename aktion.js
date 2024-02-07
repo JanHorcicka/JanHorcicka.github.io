@@ -385,7 +385,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
           div.style.position = 'fixed';  // Set position to fixed
           div.style.bottom = '0';  // Position at the bottom of the window
           div.style.right = '0';  // Position at the right of the window
-          div.style.zIndex = '5';
+          div.style.zIndex = '999';
           document.body.appendChild(div);
 
           // Run JavaScript
@@ -490,7 +490,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
             scrollToTheBottom();
 
             $.ajax({
-                url: 'https://demo-metaexponential.eu.pythonanywhere.com/api',
+                url: 'https://metaexponential.eu.pythonanywhere.com/api',
                 method: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({
@@ -511,7 +511,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
                     saveChatHistory();
 
                     // Write the answer to the window
-                    var messageElement = $('<div class="chat-friend"><div class="icon"><i class="material-icons"><b>Chatbot</b></i></div><div class="chat-message"></div></div>');
+                    var messageElement = $('<div class="chat-friend"><div class="sender"><i class="material-icons"><b>Chatbot</b></i></div><div class="chat-message"></div></div>');
                     $('.chat-logs').prepend(messageElement);
                     answer = removeAssistant(answer);
                     typeMessage(urlify(answer), messageElement.find('.chat-message'));
@@ -541,7 +541,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
                         }
                     }     
                     
-                    var errorMessageElement = $('<div class="chat-friend"><div class="icon"><i class="material-icons"><b>Chatbot</b></i></div><div class="chat-message">' + error_message + '</div></div>');
+                    var errorMessageElement = $('<div class="chat-friend"><div class="sender"><i class="material-icons"><b>Chatbot</b></i></div><div class="chat-message">' + error_message + '</div></div>');
                     prependMessage(errorMessageElement);
                 }
             });
@@ -554,17 +554,17 @@ var script = document.createElement('script');script.src = "https://code.jquery.
         function renderMessage(message, type) {
             const clazz = type === 'HumanMessage' ? 'chat-self' : 'chat-friend';
             const title = type === 'HumanMessage' ? 'Vy' : 'Chatbot';
-            var messageDiv = '<div class="' + clazz + '"><div class="icon"><i class="material-icons"><b>' + title + '</b></i></div><div class="chat-message">' + message + '</div></div>'
+            var messageDiv = '<div class="' + clazz + '"><div class="sender"><i class="material-icons"><b>' + title + '</b></i></div><div class="chat-message">' + message + '</div></div>'
             prependMessage(messageDiv);
         }
 
         function createMessageElement(message, senderName, className) {
-            return $('<div class="chat-' + className + '"><div class="icon"><i class="material-icons"><b>' + senderName + '</b></i></div><div class="chat-message">' + message + '</div></div>');
+            return $('<div class="chat-' + className + '"><div class="sender"><i class="material-icons"><b>' + senderName + '</b></i></div><div class="chat-message">' + message + '</div></div>');
         }
 
         function greetUser(shouldTypeMessage) {
             var greeting = "Dobrý den, jsem asistenční robot poháněný umělou inteligencí. Rád vám poradím s jakýmkoliv dotazem. Ptejte se...";
-            var messageElement = $('<div class="chat-friend"><div class="icon"><i class="material-icons"><b>Chatbot</b></i></div><div class="chat-message"></div></div>');
+            var messageElement = $('<div class="chat-friend"><div class="sender"><i class="material-icons"><b>Chatbot</b></i></div><div class="chat-message"></div></div>');
             $('.chat-logs').prepend(messageElement);
             if (shouldTypeMessage) {
                 typeMessage(greeting, messageElement.find('.chat-message'));
@@ -619,7 +619,7 @@ var script = document.createElement('script');script.src = "https://code.jquery.
         }
 
         function createTypingIndicator() {
-            return $('<div class="chat-friend"><div class="icon"><i class="material-icons"><b>Chatbot</b></i></div><div class="typing-indicator"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>');
+            return $('<div class="chat-friend"><div class="sender"><i class="material-icons"><b>Chatbot</b></i></div><div class="typing-indicator"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>');
         }
 
         function scrollToTheBottom() {
