@@ -75,6 +75,9 @@ var script = document.createElement('script');script.src = "https://code.jquery.
             cursor:pointer;
           }
           .chat-box-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             background: #7dc242;
             height:auto;
             color:black;
