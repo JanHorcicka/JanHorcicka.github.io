@@ -27,6 +27,7 @@
     font-style: normal;
     font-weight: 400;
     line-height: 38px; /* 158.333% */
+    padding-bottom: 30px;
 }
 
 .instructions {
@@ -78,6 +79,7 @@
     font-weight: 700;
     width: 100%;
     letter-spacing: 5px;
+    line-height: 1;
 }
 
 .exponential {
