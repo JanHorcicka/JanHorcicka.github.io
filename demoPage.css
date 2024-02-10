@@ -1,0 +1,74 @@
+.title {
+    color: var(--Midnight-Blue, #181453);
+    font-feature-settings: 'clig' off, 'liga' off;
+    font-family: Poppins;
+    font-size: 54px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 66px; /* 122.222% */
+}
+
+.subtitle {
+    width: 770px;
+    color: #181453;
+    text-align: center;
+    font-feature-settings: 'clig' off, 'liga' off;
+    font-family: Poppins;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 38px; /* 158.333% */
+}
+
+.instructions {
+    width: 828px;
+    color: #181453;
+    font-feature-settings: 'clig' off, 'liga' off;
+    font-family: Poppins;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 38px; /* 190% */
+}
+
+.item {
+    color: var(--Midnight-Blue, #181453);
+    font-feature-settings: 'clig' off, 'liga' off;
+    font-family: Poppins;
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 38px;
+}
+
+.metaLogoWrapper{
+    width: 341px;
+    height: 88px;
+    flex-shrink: 0;
+    display: flex;
+}
+
+.metaLogo {
+    fill: linear-gradient(250deg, #9A5DFD 4.84%, #FD5DFB 76.44%);
+}
+
+.metaNameWrapper {
+    display: flex;
+}
+
+.meta {
+    color: var(--Midnight-Blue, #181453);
+    font-feature-settings: 'clig' off, 'liga' off;
+    font-family: Poppins;
+    font-size: 104px;
+    font-style: normal;
+    font-weight: 700;
+}
+
+.exponential {
+    color: var(--Midnight-Blue, #181453);
+    font-feature-settings: 'clig' off, 'liga' off;
+    font-family: Poppins;
+    font-size: 34px;
+    font-style: normal;
+}
