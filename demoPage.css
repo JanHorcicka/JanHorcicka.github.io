@@ -1,3 +1,11 @@
+.bodyWrapper {
+    display: flex;
+    justify-content: center;
+    padding: 100px 100px 0px 100px;
+    align-items: center;
+    flex-direction: column;
+}
+
 .title {
     color: var(--Midnight-Blue, #181453);
     font-feature-settings: 'clig' off, 'liga' off;
@@ -6,6 +14,7 @@
     font-style: normal;
     font-weight: 700;
     line-height: 66px; /* 122.222% */
+    padding: 15px 0px;
 }
 
 .subtitle {
@@ -39,13 +48,15 @@
     font-style: normal;
     font-weight: 400;
     line-height: 38px;
+    padding-top: 5px;
 }
 
 .metaLogoWrapper{
-    width: 341px;
-    height: 88px;
+    width: auto;
     flex-shrink: 0;
     display: flex;
+    padding: 30px 0px;
+    justify-content: space-between;
 }
 
 .metaLogo {
@@ -54,21 +65,30 @@
 
 .metaNameWrapper {
     display: flex;
+    flex-direction: column;
+    padding-left: 20px;
 }
 
 .meta {
     color: var(--Midnight-Blue, #181453);
     font-feature-settings: 'clig' off, 'liga' off;
     font-family: Poppins;
-    font-size: 104px;
+    font-size: 105px;
     font-style: normal;
     font-weight: 700;
+    width: 100%;
+    letter-spacing: 5px;
 }
 
 .exponential {
     color: var(--Midnight-Blue, #181453);
     font-feature-settings: 'clig' off, 'liga' off;
     font-family: Poppins;
-    font-size: 34px;
+    font-size: 44px;
     font-style: normal;
+    width: 100%;
+    display: flex;
+    justify-self: stretch;
+    text-align: center;
+    letter-spacing: 3px;
 }
